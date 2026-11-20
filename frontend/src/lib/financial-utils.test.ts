@@ -61,6 +61,20 @@ describe("computeKPIs", () => {
 });
 
 describe("computeMonthlyData", () => {
+  it("treats date-only values as calendar dates in every timezone", () => {
+    const monthlyData = computeMonthlyData([
+      {
+        create_date: "2024-02-01",
+        amount: 100,
+        operation_type: "income",
+        category: "sales",
+        business_type: "B2B",
+      },
+    ]);
+
+    expect(monthlyData[0].month).toBe("Feb 2024");
+  });
+
   it("returns chronological year-month points with aggregated totals", () => {
     const unsortedCrossYearMovements: FinancialMovement[] = [
       {

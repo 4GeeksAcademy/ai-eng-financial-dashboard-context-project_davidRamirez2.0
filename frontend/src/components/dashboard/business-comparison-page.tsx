@@ -16,6 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   type BusinessType,
   type Category,
@@ -135,7 +136,9 @@ function CategoryTable({ business }: { business: BusinessIncome }) {
   return (
     <Card className="border-border/60">
       <CardHeader>
-        <CardTitle>{business.businessType} income</CardTitle>
+        <h3 className="leading-none font-semibold">
+          {business.businessType} income
+        </h3>
         <CardDescription>
           Top 5 income categories · Total income:{" "}
           {formatCurrency(business.totalIncome)}
@@ -180,6 +183,34 @@ function CategoryTable({ business }: { business: BusinessIncome }) {
             </tbody>
           </table>
         </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function CategoryTableSkeleton() {
+  return (
+    <Card aria-hidden="true" className="border-border/60">
+      <CardHeader>
+        <Skeleton className="h-5 w-32" />
+        <Skeleton className="h-10 w-60 sm:h-5" />
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-[minmax(0,1fr)_5rem_5.5rem] gap-3 border-b border-border px-3 py-2">
+          <Skeleton className="h-5 w-20" />
+          <Skeleton className="h-5 w-12" />
+          <Skeleton className="h-5 w-14" />
+        </div>
+        {Array.from({ length: 5 }, (_, index) => (
+          <div
+            key={index}
+            className="grid grid-cols-[minmax(0,1fr)_5rem_5.5rem] gap-3 border-b border-border/60 px-3 py-3 last:border-0"
+          >
+            <Skeleton className="h-5 w-24" />
+            <Skeleton className="h-5 w-16" />
+            <Skeleton className="h-5 w-12" />
+          </div>
+        ))}
       </CardContent>
     </Card>
   );
@@ -257,11 +288,11 @@ export function BusinessComparisonPage() {
     : [];
 
   return (
-    <section aria-labelledby="business-comparison-title" className="flex flex-col gap-6">
+    <section id="dashboard-content" tabIndex={-1} aria-labelledby="business-comparison-title" className="flex flex-col gap-6">
       <div>
-        <h1 id="business-comparison-title" className="text-2xl font-semibold">
+        <h2 id="business-comparison-title" className="text-2xl font-semibold">
           Business income comparison
-        </h1>
+        </h2>
         <p className="text-sm text-muted-foreground">
           Compare income performance across B2B and B2C.
         </p>
@@ -300,11 +331,11 @@ export function BusinessComparisonPage() {
         >
           Apply
         </button>
-        {facets ? (
-          <p className="text-sm text-muted-foreground sm:ml-auto sm:pb-2">
-            Available range: {facets.min_date} – {facets.max_date}
-          </p>
-        ) : null}
+        <p className="min-h-10 text-sm text-muted-foreground sm:ml-auto sm:pb-2 lg:min-h-7">
+          {facets
+            ? `Available range: ${facets.min_date} – ${facets.max_date}`
+            : null}
+        </p>
       </form>
 
       {invalidDateRange ? (
@@ -320,7 +351,11 @@ export function BusinessComparisonPage() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {loading && !comparison ? (
-          <p className="text-sm text-muted-foreground">Loading business income...</p>
+          <>
+            <p className="sr-only" role="status">Loading business income.</p>
+            <CategoryTableSkeleton />
+            <CategoryTableSkeleton />
+          </>
         ) : comparison ? (
           <>
             <CategoryTable business={comparison.b2b} />
@@ -349,7 +384,12 @@ export function BusinessComparisonPage() {
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={chartData} margin={{ top: 8, right: 12, left: 8, bottom: 8 }}>
+              <BarChart
+                data={chartData}
+                title="Total income by business line"
+                desc="Compare B2B and B2C income. Use the arrow keys to explore data points."
+                margin={{ top: 8, right: 12, left: 8, bottom: 8 }}
+              >
                 <CartesianGrid
                   strokeDasharray="3 3"
                   stroke="var(--color-border)"

@@ -5,6 +5,7 @@
 - Un cambio de API se prueba con pytest en `backend/tests`, usando `TestClient`. No hace falta levantar Uvicorn.
 - Un cambio de KPI o de series mensuales se prueba con Vitest en `frontend/src/lib/financial-utils.test.ts`, con fixtures locales. Esos tests no llaman a la API.
 - Ejecuta solo el archivo de test del cambio. No lances toda la suite para un ajuste pequeño.
+- Antes de merge, sigue el checklist de `CONTRIBUTING.md`: pytest para cambios del backend, Vitest enfocado para lógica frontend, y lint/build para cambios frontend. Para cambios de Docker/Compose, valida la configuración y prueba el arranque y `/health`.
 
 ## Hecho del repo
 

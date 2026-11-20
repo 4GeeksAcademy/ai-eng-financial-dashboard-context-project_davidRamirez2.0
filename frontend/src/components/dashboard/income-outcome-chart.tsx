@@ -76,7 +76,12 @@ export function IncomeOutcomeChart({ data, loading }: IncomeOutcomeChartProps) {
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={280}>
-            <LineChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+            <LineChart
+              data={data}
+              title="Income vs. Outcome"
+              desc="Monthly income and outcome totals. Use the arrow keys to explore data points."
+              margin={{ top: 4, right: 8, left: 0, bottom: 0 }}
+            >
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" strokeOpacity={0.6} />
               <XAxis
                 dataKey="month"

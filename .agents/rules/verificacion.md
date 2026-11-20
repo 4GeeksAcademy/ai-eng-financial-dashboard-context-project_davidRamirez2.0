@@ -12,7 +12,7 @@
 
 * Semilla aplicada al RNG global. random.seed(seed) dentro de enerate_mock_movements reinicia el estado aleatorio global del proceso (routes.py:94). Si otros módulos usan random, el generador podría afectar su comportamiento; para aislarlos, sería preferible una instancia local de random.Random.
 
-* Posible carrera al iniciar. Compose declara depends_on, pero no un healthcheck; el frontend hace una carga al montarse y muestra error si falla, sin reintento visible en ese flujo (docker-compose.yml:11, App.tsx:29). Si aparece un fallo intermitente al arrancar, comprueba primero si el backend ya estaba listo.
+* Arranque de servicios. Compose define un healthcheck del backend en `/health` y el frontend espera `service_healthy`. El cliente no reintenta automáticamente una petición fallida; si el dashboard muestra error, comprueba `docker compose ps` y los logs del backend. Los procesos iniciados fuera de Compose no heredan esa espera.
 
 * CORS permisivo. La API permite todos los orígenes, métodos y encabezados, junto con credenciales (main.py:9). Puede ser una conveniencia de desarrollo; para desplegar, conviene configurar los orígenes autorizados explícitamente.
 Estas son advertencias para orientar cambios futuros; no implican que haya que modificar ahora el comportamiento intencional del proyecto.

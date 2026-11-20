@@ -39,11 +39,32 @@ _Financial metrics dashboard with a React + TypeScript frontend and a FastAPI ba
 ## How to run locally
 
 ```bash
-docker compose up --build
+./start-services.sh
+```
+
+The script builds and starts the backend, then the frontend, in the background.
+You can also start them manually:
+
+```bash
+docker compose up -d --build backend
+docker compose up -d --build frontend
 ```
 
 The frontend uses the Vite proxy for `/api` by default, so no extra environment variables are required in local development or Codespaces.
-If you need to target a different backend origin, copy `frontend/.env.example` to `.env` and set `VITE_API_BASE_URL`.
+To target a different backend during development, set `VITE_API_BASE_URL` in `frontend/.env.local` to a URL reachable by the browser, for example `http://localhost:8000`.
+
+### Container deployment
+
+```bash
+docker build --target production -t financial-dashboard-frontend ./frontend
+```
+
+1. Build the frontend image with the command above and publish it to the registry used by your container platform.
+2. Run the container with port `8080` exposed.
+3. Connect the frontend and backend to a network where the API resolves as `backend:8000`; Nginx forwards `/api/` to that hostname.
+4. Verify `GET /api/metrics` through the frontend and `/health` and `/docs` directly on the backend.
+
+The repository defines a production target only for the frontend and does not select a hosting provider. `docker-compose.yml` is for development; `backend/Dockerfile` starts `debugpy` and Uvicorn with `--reload`, and the backend allows all CORS origins together with credentials. A complete backend deployment still requires a production image/configuration and a restricted CORS policy. Do not use the current backend configuration as a production deployment.
 
 - Frontend: http://localhost:5173
 - Backend: http://localhost:8000
